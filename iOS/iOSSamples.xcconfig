@@ -28,7 +28,7 @@
 // ITMAPPLICATION_REDIRECT_URI
 //
 // Set the following to disable auth if it crashes when running in the Simulator.
-// ITMAPPLICATION_DISABLE_AUTH = YES
+ ITMAPPLICATION_DISABLE_AUTH = YES
 
 // The following four settings only apply to the ThirdPartyAuth example.
 //
@@ -60,7 +60,8 @@
 //
 // If you want to run the built app locally on the device instead of using the React debug
 // server, set the following:
-// ITMAPPLICATION_NO_DEBUG_SERVER = YES
+
+ITMAPPLICATION_NO_DEBUG_SERVER = YES
 //
 // Set the following setting if you want to enable logging of messages passed between swift and typescript:
 // ITMAPPLICATION_MESSAGE_LOGGING = YES

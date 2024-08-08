@@ -1,8 +1,3 @@
-/*---------------------------------------------------------------------------------------------
-* Copyright (c) Bentley Systems, Incorporated. All rights reserved.
-* See LICENSE.md in the project root for license terms and full copyright notice.
-*--------------------------------------------------------------------------------------------*/
-
 import SwiftUI
 import ITwinMobile
 
@@ -20,8 +15,17 @@ struct SwiftUIStarterApp: App {
             ITMSwiftUIContentView(application: application)
                 .edgesIgnoringSafeArea(.all)
                 .onOpenURL() { url in
-                    DocumentHelper.openInboxURL(url)
+                    if isValidURL(url) {
+                        DocumentHelper.openInboxURL(url)
+                    } else {
+                        print("Invalid URL received: \(url)")
+                    }
                 }
         }
+    }
+
+    func isValidURL(_ url: URL) -> Bool {
+        // 添加验证URL逻辑
+        return true
     }
 }
