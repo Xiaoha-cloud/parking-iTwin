@@ -4,21 +4,22 @@ import { imageElementFromUrl, IModelApp } from '@itwin/core-frontend';
 import { Alert, ToggleSwitch } from '@itwin/itwinui-react';
 import { MarkerPinDecorator } from '../common/marker-pin/MarkerPinDecorator';
 import { PlaceMarkerTool } from '../common/marker-pin/PlaceMarkerTool';
-import { PopupMenu, PopupMenuEvent, PopupMenuEntry } from '../common/marker-pin/PopupMenu';  // 导入 PopupMenu 和相关类
+import { PopupMenu, PopupMenuEntry } from '../common/marker-pin/PopupMenu';
 import MarkerPinApi from './MarkerPinApi';
 import './MarkerPin.scss';
-import supabase from '../db/db'; // Supabase client
+import supabase from '../db/db';
 import { Cartographic } from '@itwin/core-common';
-import { ExtendedMarkerData } from './ExtendedMarkerData'; // 导入扩展接口
+import { ExtendedMarkerData } from './ExtendedMarkerData';
 
 const MarkerPinWidget: React.FC = () => {
   const viewport = useActiveViewport();
   const [imagesLoadedState, setImagesLoadedState] = useState<boolean>(false);
   const [showDecoratorState, setShowDecoratorState] = useState<boolean>(true);
-  const [markersDataState, setMarkersDataState] = useState<ExtendedMarkerData[]>([]); // 使用 ExtendedMarkerData
-  const [markerPinDecorator] = useState<MarkerPinDecorator>(() => MarkerPinApi.setupDecorator());
+  const [markersDataState, setMarkersDataState] = useState<ExtendedMarkerData[]>([]);
+  const [markerPinDecorator] = useState<MarkerPinDecorator<ExtendedMarkerData>>(() => MarkerPinApi.setupDecorator());
 
   useEffect(() => {
+    
     MarkerPinApi._images = new Map();
     const loadImages = async () => {
       const p1 = imageElementFromUrl('pin_google_maps.svg');
@@ -81,22 +82,23 @@ const MarkerPinWidget: React.FC = () => {
 
         const updateMarkers = async (arr: any[]) => {
           if (arr) {
-            const markersData: ExtendedMarkerData[] = []; // 使用 ExtendedMarkerData
+            const markersData: ExtendedMarkerData[] = [];
             for (const pos of arr) {
               const point = await convertToSpatial({ long: pos.longitude, lat: pos.latitude });
               markersData.push({
                 point,
-                id: pos.id,  // 保存 ID
-                label: pos.label,  // 保存标签
-                capacity: pos.capacity,  // 保存容量
-                available: pos.available  // 保存剩余车位数
+                id: pos.id,
+                label: pos.label,
+                capacity: pos.capacity,
+                available: pos.available,
+                longitude: pos.longitude,
+                latitude: pos.latitude
               });
             }
             setMarkersDataState(markersData);
           }
         };
 
-        // 从 Supabase 获取初始数据
         const { data, error } = await supabase.from('parkinglot').select('id, longitude, latitude, capacity, available, label');
         if (error) {
           console.error('Error fetching markers:', error);
@@ -104,7 +106,6 @@ const MarkerPinWidget: React.FC = () => {
           await updateMarkers(data);
         }
 
-        // 实时订阅 Supabase 数据变化
         const subscription = supabase
           .channel('table_changes')
           .on('postgres_changes', { event: '*', schema: 'public', table: 'parkinglot' }, (payload) => {
@@ -113,7 +114,6 @@ const MarkerPinWidget: React.FC = () => {
           })
           .subscribe();
 
-        // 组件卸载时清理订阅
         return () => {
           supabase.removeChannel(subscription);
         };
@@ -123,11 +123,85 @@ const MarkerPinWidget: React.FC = () => {
     fetchData().catch(console.error);
   }, [markersDataState, viewport]);
 
-  const handleMarkerClick = (markerData: ExtendedMarkerData, e: React.MouseEvent) => { // 使用 ExtendedMarkerData
+  const displayParkingLotInfo = (markerData: ExtendedMarkerData) => {
+    console.log(`停车场 ${markerData.label}: 总容量: ${markerData.capacity}, 可用车位: ${markerData.available}`);
+  };
+
+  const occupyParkingSpot = async (markerData: ExtendedMarkerData) => {
+    const { longitude, latitude } = markerData;
+    const newLongitude = longitude + (Math.random() - 0.5) * 0.0001;
+    const newLatitude = latitude + (Math.random() - 0.5) * 0.0001;
+
+    const { error } = await supabase
+      .from('parkingspot')
+      .insert([
+        {
+          longitude: newLongitude,
+          latitude: newLatitude,
+          status: 'occupied',
+          parkinglot_id: markerData.id,
+          label: `Spot near ${markerData.label}`
+        },
+      ]);
+
+    if (error) {
+      console.error('Error occupying parking spot:', error);
+    } else {
+      console.log('Parking spot occupied successfully.');
+    }
+  };
+
+  const releaseParkingSpot = async (markerData: ExtendedMarkerData) => {
+    const { data, error } = await supabase
+      .from('parkingspot')
+      .select('id')
+      .eq('parkinglot_id', markerData.id)
+      .eq('status', 'occupied')
+      .order('id', { ascending: false })
+      .limit(1);
+
+    if (error) {
+      console.error('Error fetching parking spot:', error);
+      return;
+    }
+
+    if (data && data.length > 0) {
+      const spotId = data[0].id;
+
+      const { error: deleteError } = await supabase
+        .from('parkingspot')
+        .delete()
+        .eq('id', spotId);
+
+      if (deleteError) {
+        console.error('Error releasing parking spot:', deleteError);
+      } else {
+        console.log('Parking spot released successfully.');
+      }
+    } else {
+      console.log('No occupied parking spots found to release.');
+    }
+  };
+
+  useEffect(() => {
+    markerPinDecorator.displayParkingLotInfo = displayParkingLotInfo;
+    markerPinDecorator.occupyParkingSpot = occupyParkingSpot;
+    markerPinDecorator.releaseParkingSpot = releaseParkingSpot;
+  }, [markerPinDecorator]);
+
+  const handleMarkerClick = (markerData: ExtendedMarkerData, e: React.MouseEvent) => {
     const menuEntries: PopupMenuEntry[] = [
       {
         label: `停车场 ${markerData.label}`,
-        onPicked: () => alert(`总容量: ${markerData.capacity}\n剩余容量: ${markerData.available}`)
+        onPicked: () => displayParkingLotInfo(markerData)
+      },
+      {
+        label: "占用一个车位",
+        onPicked: () => occupyParkingSpot(markerData)
+      },
+      {
+        label: "取消占用车位",
+        onPicked: () => releaseParkingSpot(markerData)
       },
     ];
 
