@@ -1,10 +1,4 @@
-/*---------------------------------------------------------------------------------------------
- * Copyright (c) Bentley Systems, Incorporated. All rights reserved.
- * See LICENSE.md in the project root for license terms and full copyright notice.
- *--------------------------------------------------------------------------------------------*/
-
 import "./App.scss";
-
 import type { ScreenViewport } from "@itwin/core-frontend";
 import { FitViewTool, IModelApp, StandardViewId } from "@itwin/core-frontend";
 import { FillCentered } from "@itwin/core-react";
@@ -34,13 +28,15 @@ import {
   ViewerStatusbarItemsProvider,
 } from "@itwin/web-viewer-react";
 import React, { useCallback, useEffect, useMemo, useState } from "react";
-
 import { Auth } from "./Auth";
 import { history } from "./history";
 import {
   unifiedSelectionStorage,
   getSchemaContext,
 } from "./selectionStorage";
+import { GlobalDisplayWidgetProvider } from "./GlobalDisplay/GlobalDisplayWidget";
+import { MarkerPinWidgetProvider } from "./markers/MarkerPinWidget";
+import { mapLayerOptions, tileAdminOptions } from "./common/MapLayerOptions";
 
 const App: React.FC = () => {
   const [iModelId, setIModelId] = useState(process.env.IMJS_IMODEL_ID);
@@ -50,7 +46,6 @@ const App: React.FC = () => {
   );
 
   const accessToken = useAccessToken();
-
   const authClient = Auth.getClient();
 
   const login = useCallback(async () => {
@@ -91,13 +86,7 @@ const App: React.FC = () => {
     history.push(url);
   }, [iTwinId, iModelId, changesetId]);
 
-  /** NOTE: This function will execute the "Fit View" tool after the iModel is loaded into the Viewer.
-   * This will provide an "optimal" view of the model. However, it will override any default views that are
-   * stored in the iModel. Delete this function and the prop that it is passed to if you prefer
-   * to honor default views when they are present instead (the Viewer will still apply a similar function to iModels that do not have a default view).
-   */
   const viewConfiguration = useCallback((viewPort: ScreenViewport) => {
-    // default execute the fitview tool and use the iso standard view after tile trees are loaded
     const tileTreesLoaded = () => {
       return new Promise((resolve, reject) => {
         const start = new Date();
@@ -113,7 +102,6 @@ const App: React.FC = () => {
             resolve(true);
           }
           const now = new Date();
-          // after 20 seconds, stop waiting and fit the view
           if (now.getTime() - start.getTime() > 20000) {
             reject();
           }
@@ -133,7 +121,6 @@ const App: React.FC = () => {
   );
 
   const onIModelAppInit = useCallback(async () => {
-    // iModel now initialized
     await TreeWidget.initialize();
     await PropertyGridManager.initialize();
     await MeasureTools.startup();
@@ -155,7 +142,7 @@ const App: React.FC = () => {
         changeSetId={changesetId}
         authClient={authClient}
         viewCreatorOptions={viewCreatorOptions}
-        enablePerformanceMonitors={true} // see description in the README (https://www.npmjs.com/package/@itwin/web-viewer-react)
+        enablePerformanceMonitors={true}
         onIModelAppInit={onIModelAppInit}
         uiProviders={[
           new ViewerNavigationToolsProvider(),
@@ -186,7 +173,11 @@ const App: React.FC = () => {
             },
           }),
           new MeasureToolsUiItemsProvider(),
+          new GlobalDisplayWidgetProvider(),
+          new MarkerPinWidgetProvider(),
         ]}
+        mapLayerOptions={mapLayerOptions} // 将 mapLayerOptions 传递给 Viewer
+        tileAdmin={tileAdminOptions}
         selectionStorage={unifiedSelectionStorage}
         getSchemaContext={getSchemaContext}
       />
