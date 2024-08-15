@@ -9,7 +9,7 @@
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
   // 设置 Google Maps API Key
-  [GMSServices provideAPIKey:@"replace Token"];  // 替换为你的 Google Maps API Key
+  [GMSServices provideAPIKey:@"AIzaSyAz_aSNFkSyv1fOUaPyGmka5GAWZ0C9tVA"];  // 替换为你的 Google Maps API Key
 
   RCTBridge *bridge = [[RCTBridge alloc] initWithDelegate:self launchOptions:launchOptions];
   RCTRootView *rootView = [[RCTRootView alloc] initWithBridge:bridge
