@@ -5,6 +5,7 @@
 import { IModelApp } from "@itwin/core-frontend";
 import { Point3d } from "@itwin/core-geometry";
 import { MarkerData, MarkerPinDecorator } from "../common/marker-pin/MarkerPinDecorator";
+import { ExtendedMarkerData } from "./ExtendedMarkerData";
 
 // cSpell:ignore SETUPDECORATOR, SETMARKERDATA, ENABLEDECORATIONS
 
@@ -18,13 +19,11 @@ export default class MarkerPinApi {
 
 
 
-  public static setMarkersData(decorator: MarkerPinDecorator, markersData: MarkerData[]) {
-    const pinImage = MarkerPinApi._images.get("pin_google_maps.svg");
-
-    if (!pinImage)
-      return;
-
-    decorator.setMarkersData(markersData, pinImage);
+  public static setMarkersData(decorator: MarkerPinDecorator, markersData: ExtendedMarkerData[], onMouseButtonCallback?: any) {
+    const pinImage = MarkerPinApi._images.get('pin_google_maps.svg');
+    if (pinImage) {
+      decorator.setMarkersData(markersData, pinImage, onMouseButtonCallback);
+    }
   }
 
 
@@ -42,4 +41,6 @@ export default class MarkerPinApi {
   public static disableDecorations(decorator: MarkerPinDecorator) {
     IModelApp.viewManager.dropDecorator(decorator);
   }
+
+
 }

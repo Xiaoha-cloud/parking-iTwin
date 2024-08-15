@@ -19,11 +19,11 @@ const viewportOptions: ViewerViewportControlOptions = {
   viewState: async (iModelConnection) => {
     IModelApp.viewManager.onViewOpen.addOnce((viewport: ScreenViewport) => {
       // The grid just gets in the way - turn it off.
-      viewport.viewFlags = viewport.view.viewFlags.with("grid", false);
+      // viewport.viewFlags = viewport.view.viewFlags.with("grid", false);
 
       // We're not interested in seeing the contents of the iModel, only the global data.
-      if (viewport.view.isSpatialView())
-        viewport.view.modelSelector.models.clear();
+      // if (viewport.view.isSpatialView())
+      //   viewport.view.modelSelector.models.clear();
     });
     return GlobalDisplayApi.getInitialView(iModelConnection);
   },

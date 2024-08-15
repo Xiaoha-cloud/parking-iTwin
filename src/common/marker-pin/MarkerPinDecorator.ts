@@ -252,12 +252,13 @@ class SampleMarkerSet extends MarkerSet<SamplePinMarker> {
   public setMarkersData(markersData: MarkerData[], image: HTMLImageElement, onMouseButtonCallback?: any): void {
     this.markers.clear();
     this._onMouseButtonCallback = onMouseButtonCallback;
-
+  
     let index = 1;
     for (const markerData of markersData) {
       this.markers.add(new SamplePinMarker(markerData, `Marker ${index++}`, ``, image, this, undefined, onMouseButtonCallback));
     }
   }
+  
 
 
 
@@ -286,6 +287,8 @@ class SampleMarkerSet extends MarkerSet<SamplePinMarker> {
 export class MarkerPinDecorator implements Decorator {
   private _autoMarkerSet = new SampleMarkerSet();
   private _manualMarkerSet = new SampleMarkerSet();
+
+
 
   /* Remove all existing markers from the "auto" markerset and create new ones for the given points. */
   public setMarkersData(markersData: MarkerData[], pinImage: HTMLImageElement, onMouseButtonCallback?: any): void {

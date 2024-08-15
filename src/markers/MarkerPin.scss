@@ -59,4 +59,26 @@
   .instructions {
     align-self: end;
   }
+
+  .info-window {
+    background: white;
+    border: 1px solid #ccc;
+    padding: 10px;
+    border-radius: 5px;
+    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+    pointer-events: none; // 确保窗口不会阻止鼠标事件
+  }
+  
+  .parking-lot-info {
+    h4 {
+      margin: 0;
+      font-size: 14px;
+    }
+  
+    p {
+      margin: 0;
+      font-size: 12px;
+    }
+  }
+  
   
