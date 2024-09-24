@@ -1,42 +1,130 @@
-# iTwin mobile-samples
+# 🚗 Smart Parking Management System
 
-Copyright © Bentley Systems, Incorporated. All rights reserved. See [LICENSE.md](./LICENSE.md) for license terms and full copyright notice.
+Welcome to the **Smart Parking Management System**! This project leverages cutting-edge technologies like **iTwin**, **Supabase**, and **iOS** development to solve the common problem of finding parking in busy areas. Whether you're on a campus, in a city, or at an event, our smart solution will help drivers save time, reduce stress, and contribute to a cleaner environment by cutting down on unnecessary emissions.
 
-## Warning
+---
 
-This is pre-release software and provided as-is.
+## 🌟 Project Highlights
 
-## About this Repository
+- **Real-time parking space availability** using iTwin’s powerful global display.
+- **Seamless data integration** between iModel data and real-time updates via Supabase.
+- **User-friendly interface** built on iTwin’s viewer for easy interaction with parking data.
+- **iOS app** for convenient on-the-go access to parking information, including maps and search functionality.
+- **Environmentally friendly** by reducing the need for drivers to circle parking lots, cutting emissions.
 
-This repository contains sample Android, iOS, and ReactNative apps that make use of the iTwin Mobile SDK.
+---
 
-There are four iOS sample apps. All of them include a WKWebView running Typescript code to host the iTwin content.
+## 🛠️ Technologies Used
 
-- **MobileStarter** is a UIKit app containing a full-screen iTwin web view.
-- **SwiftUIStarter** is a SwiftUI app that similarly contains a full-screen iTwin web view.
-- **CameraSample** demonstrates how to make calls to native iOS code to take or select a picture.
-- **ThirdPartyAuth** demonstrates how to use a third party for user authentication.
+### iTwin Platform
+We harnessed the power of **iTwin’s platform** to visualize parking spots in real time. The platform's **global display** lets users see available parking spaces on a map, ensuring they never have to guess or drive in circles. It provides a highly detailed view of the location and status of parking lots.
 
-Each iOS sample app includes an Xcode project with a LocalSDK\_ prefix. These Xcode projects are the same as the main ones, with the exception that they refer to a local filesystem copy of mobile-sdk-ios, instead of referring to the mobile-sdk-ios Swift Package on GitHub. You must have mobile-sdk-ios checked out alongside mobile-samples in order for these to work.
+### ECSQL & iModel Data Integration
+Using **ECSQL**, we built a robust real-time database that works seamlessly with **iModel data** from the iTwin platform. This integration ensures that parking information is constantly updated and synchronized, giving users access to the latest data at all times.
 
-There are three Android sample apps. All of them include an Android WebView running TypeScript code to host the iTwin content
+### Supabase for Real-Time Updates
+To handle the real-time updates, we employed **Supabase**, which acts similarly to Firebase. Supabase ensures that changes in parking spot availability are instantly reflected in the system. With this setup, users can mark spots as occupied or free in real-time, keeping everyone on the same page.
 
-- **iTwinStarter** is an app containing a full-screen iTwin web view.
-- **CameraSample** demonstrates how to make calls to native Android code to take or select a picture.
-- **ThirdPartyAuth** demonstrates how to use a third party for user authentication.
+### iTwin Viewer
+The **iTwin Viewer** provides an interactive way for users to engage with parking data. Through this interface, users can explore parking lots, check availability, and update the status of parking spots—all with a simple click.
 
-There is one React Native sample app:
+### iOS App Development
+We developed a dedicated **iOS app** that allows users to quickly and easily find parking spots. The app features:
+- A **search bar** for looking up parking lots.
+- A **map view** to display detailed information about each lot, including the number of available spaces.
+- Real-time updates to keep users informed on parking spot availability.
+- An intuitive user experience from login to selecting a parking space.
 
-- **iTwinRNStarter** is a React Native app with a WebView running TypeScript code to host the iTwin content.
+---
 
-See [iOS/README.md](./iOS/README.md) for instructions on building the iOS samples.
+## 💡 Problem Solved
 
-See [Android/README.md](./Android/README.md) for instructions on building the Android samples.
+Imagine arriving at a parking lot only to circle around endlessly, searching for a spot. Our system eliminates this frustration by showing available spaces in real-time. By cutting down on the time spent searching for parking, we reduce traffic congestion and pollution, creating a more efficient and environmentally-friendly parking experience.
 
-See [ReactNative/README.md](./ReactNative/README.md) for instructions on building the React Native sample.
+---
 
-See [OFFLINE.md](./OFFLINE.md) for information about using iModels while offline.
+## 🚀 Installation
 
-## Sample iModels
+### Backend (iTwin and Supabase Integration)
 
-The `Snapshot iModels` directory contains sample snapshot iModels that can be copied onto the device to be opened from the apps. Right now, there is only one sample: `Building Blocks.bim`. On a Windows PC, you can use iTunes to copy the file to an iPhone or iPad, and on a Mac you can use Finder. You can use the Device File Explorer in Android Studio to copy the file to an Android device. Once it has been copied to the app's documents directory on the device, it will show up in the Local iModels screen of the app. If you are already on that screen while you copy the file, hit the refresh button in the upper right to refresh the list. If you copy the file to a system directory on the device instead of the app's documents directory, you can use the `Choose File...` button on the Local iModels screen.
+1. Clone the repository: 
+    ```bash
+    git clone https://github.com/Xiaoha-cloud/parking-iTwin.git
+    ```
+2. Navigate to the backend code:
+    ```bash
+    cd parking-iTwin
+    ```
+3. Install dependencies:
+    ```bash
+    npm install
+    ```
+4. Set up the iTwin and Supabase environment variables by following the `.env.example` file.
+
+5. Run the server:
+    ```bash
+    npm start
+    ```
+
+### iOS App
+
+1. Clone the `dev-app` branch for the iOS part of the project:
+    ```bash
+    git checkout dev-app
+    ```
+2. Open the project in Xcode and configure your **Supabase** credentials in the environment variables.
+
+3. Run the app on a simulator or connected device.
+
+---
+
+## 🧑‍💻 Usage
+
+1. Launch the backend to start the real-time parking data feed.
+2. Open the iOS app and log in.
+3. Use the search feature or map to find available parking spots.
+4. Mark a parking spot as taken or free with a simple tap.
+5. Enjoy a stress-free parking experience!
+
+---
+
+## 🏆 Hackathon Experience
+
+We secured **3rd Prize** in the **Bentley iTwin4Good Championship 2024**, competing against 42 teams nationwide. This recognition highlights our innovative solution that optimized urban parking spaces and traffic flow, all made possible through the iTwin platform.
+
+---
+
+## 🔧 Branch Information
+
+- The core code for iTwin’s **iViewer** integration is available in the `spa-dev` branch.
+- The **iOS app** development is maintained in the `dev-app` branch.
+
+---
+
+## 🤝 Contribution
+
+We welcome contributions to improve our smart parking system! To contribute, follow these steps:
+
+1. Fork the repository.
+2. Create a new feature branch:
+    ```bash
+    git checkout -b feature-branch
+    ```
+3. Make your changes and commit them:
+    ```bash
+    git commit -m "Add new feature"
+    ```
+4. Push to the branch:
+    ```bash
+    git push origin feature-branch
+    ```
+5. Open a pull request and describe the changes.
+
+---
+
+## 📄 License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+---
+
